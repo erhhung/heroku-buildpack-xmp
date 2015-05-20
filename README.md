@@ -1,8 +1,8 @@
 heroku-buildpack-xmp
 ====================
 
-A Heroku buildpack that installs XMP Toolkit SDK on the **Cedar-14** stack.
-The version currently installed is CC-2014.12 (see http://www.adobe.com/devnet/xmp.html).
+A Heroku buildpack that installs XMP Toolkit SDK on the **Cedar-14** stack.  
+The version currently installed is CC-2014.12 (http://www.adobe.com/devnet/xmp.html).
 
 Usage
 -----
