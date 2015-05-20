@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# bin/release BUILD_DIR
+
+cat <<EOF
+---
+config_vars:
+  LD_LIBRARY_PATH: /app/vendor/xmp/lib:$LD_LIBRARY_PATH
+EOF

@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# bin/compile BUILD_DIR CACHE_DIR ENV_DIR
+
+arrow() {
+  sed -u 's/^/-----> /'
+}
+indent() {
+  sed -u 's/^/       /'
+}
+
+    BUILD_DIR=$1
+    CACHE_DIR=$2
+BUILDPACK_DIR=`cd $(dirname $0)/..; pwd`
+
+S3_BASE_URL="http://s3.amazonaws.com/crystalvista/devtools"
+TARBALL_URL="$S3_BASE_URL/xmp-2014.12.tar.gz"
+
+ VENDOR_PATH="/app/vendor/xmp"
+ TARGET_PATH="/tmp/codon/vendor/xmp"
+   SLUG_PATH="$BUILD_DIR/vendor/xmp"
+PROFILE_PATH="$BUILD_DIR/.profile.d"
+
+echo "Installing XMP Toolkit SDK CC-2014.12" | arrow
+mkdir -p  "$TARGET_PATH"
+rm    -rf                "$VENDOR_PATH"
+ln    -s  "$TARGET_PATH" "$VENDOR_PATH"
+
+# download and unpack
+echo "Fetching   $TARBALL_URL" | indent
+curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 "$TARBALL_URL" -s -o - | tar xzf - -C "$TARGET_PATH"
+
+# copy libs into slug
+mkdir -p                    "$SLUG_PATH"
+cp    -a "$TARGET_PATH/lib" "$SLUG_PATH"
+
+# configure paths
+mkdir -p    "$PROFILE_PATH"
+cat <<EOF > "$PROFILE_PATH/xmp.sh"
+export LD_LIBRARY_PATH="$VENDOR_PATH/lib:\$LD_LIBRARY_PATH"
+unset     LIBRARY_PATH INCLUDE_PATH CPATH CPPPATH
+EOF
+
+# propagate paths to subsequent buildpacks
+export LIBRARY_PATH="$TARGET_PATH/lib:$LIBRARY_PATH"
+export INCLUDE_PATH="$TARGET_PATH/include:$INCLUDE_PATH"
+export        CPATH="$TARGET_PATH/include:$CPATH"
+export      CPPPATH="$TARGET_PATH/include:$CPPPATH"
+export | grep -Ee '\s(LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH)=' > "$BUILDPACK_DIR/export"
+echo "Exported:  LIBRARY_PATH INCLUDE_PATH CPATH CPPPATH" | indent
+echo
