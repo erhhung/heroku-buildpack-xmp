@@ -31,7 +31,7 @@ curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 "$TARBALL_URL" -s -o -
 
 # copy libs into slug
 mkdir -p                  "$SLUG_PATH"
-cp    -a "$TARGET_PATH/*" "$SLUG_PATH"
+cp    -a "$TARGET_PATH"/* "$SLUG_PATH"
 
 # configure paths
 mkdir -p    "$PROFILE_PATH"
