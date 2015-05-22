@@ -30,14 +30,19 @@ echo "Fetching   $TARBALL_URL" | indent
 curl --fail --retry 3 --retry-delay 1 --connect-timeout 3 "$TARBALL_URL" -s -o - | tar xzf - -C "$TARGET_PATH"
 
 # copy libs into slug
-mkdir -p                    "$SLUG_PATH"
-cp    -a "$TARGET_PATH/lib" "$SLUG_PATH"
+mkdir -p                  "$SLUG_PATH"
+cp    -a "$TARGET_PATH/*" "$SLUG_PATH"
 
 # configure paths
 mkdir -p    "$PROFILE_PATH"
 cat <<EOF > "$PROFILE_PATH/xmp.sh"
 export LD_LIBRARY_PATH="$VENDOR_PATH/lib:\$LD_LIBRARY_PATH"
-unset     LIBRARY_PATH INCLUDE_PATH CPATH CPPPATH
+export    LIBRARY_PATH="$VENDOR_PATH/lib:\$LIBRARY_PATH"
+export    INCLUDE_PATH="$VENDOR_PATH/include:\$INCLUDE_PATH"
+export           CPATH="$VENDOR_PATH/include:\$CPATH"
+export         CPPPATH="$VENDOR_PATH/include:\$CPPPATH"
+# builtin unset may be overridden to be no-op
+unset LIBRARY_PATH INCLUDE_PATH CPATH CPPPATH
 EOF
 
 # propagate paths to subsequent buildpacks
