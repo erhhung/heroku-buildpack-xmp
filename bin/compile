@@ -46,10 +46,11 @@ unset LIBRARY_PATH INCLUDE_PATH CPATH CPPPATH
 EOF
 
 # propagate paths to subsequent buildpacks
-export LIBRARY_PATH="$TARGET_PATH/lib:$LIBRARY_PATH"
-export INCLUDE_PATH="$TARGET_PATH/include:$INCLUDE_PATH"
-export        CPATH="$TARGET_PATH/include:$CPATH"
-export      CPPPATH="$TARGET_PATH/include:$CPPPATH"
+export LD_LIBRARY_PATH="$TARGET_PATH/lib:$LD_LIBRARY_PATH"
+export    LIBRARY_PATH="$TARGET_PATH/lib:$LIBRARY_PATH"
+export    INCLUDE_PATH="$TARGET_PATH/include:$INCLUDE_PATH"
+export           CPATH="$TARGET_PATH/include:$CPATH"
+export         CPPPATH="$TARGET_PATH/include:$CPPPATH"
 export | grep -Ee '\s(LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH)=' > "$BUILDPACK_DIR/export"
-echo "Exported:  LIBRARY_PATH INCLUDE_PATH CPATH CPPPATH" | indent
+echo "Exported:  LD_LIBRARY_PATH LIBRARY_PATH INCLUDE_PATH CPATH CPPPATH" | indent
 echo
